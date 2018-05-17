@@ -98,6 +98,19 @@ class Instagram:
         resp_json = utils.resp_to_json(resp)
         return resp_json
 
+    def delete_direct_message(self, thread_id, item_id):
+        data = {
+            "_uuid": self.uuid,
+            "_csrftoken": self.token,
+        }
+        resp = self.send_request('direct_v2/threads/{}/items/{}/delete/'.format(thread_id, item_id),
+                                 self.generate_signature(json.dumps(data)))
+        if resp.status_code != 200:
+            return False
+
+        resp_json = utils.resp_to_json(resp)
+        return resp_json
+
     def generate_signature(self, data):
         return 'ig_sig_key_version=' + self.SIG_KEY_VERSION + '&signed_body=' + hmac.new(
             self.IG_SIG_KEY.encode('utf-8'), data.encode('utf-8'),

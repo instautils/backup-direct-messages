@@ -108,6 +108,30 @@ class Application:
             elif message['item_type'] == 'text':
                 self.dump_message(message)
 
+    def remove_messages(self, reverse=False):
+        name = self.dump_file.name
+        self.dump_file.close()
+
+        self.dump_file = open(name, 'rb')
+        self.csv_handler = csv.reader(self.dump_file)
+
+        items = [row for row in self.csv_handler]
+        items.sort(key=lambda a: a[3], reverse=reverse)
+
+        for message in items:
+            if int(message[0]) == self.instagram.username_id:
+                result = self.instagram.delete_direct_message(self.selected_thread_id, message[2])
+                if not self.debug_mode:
+                    continue
+
+                if result:
+                    if result["status"] == "ok":
+                        logging.info("Direct item {} has been deleted.".format(message[2]))
+                    else:
+                        logging.error(result["status"])
+                else:
+                    logging.error("Could not remove direct item {}.".format(message[2]))
+
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
@@ -119,6 +143,8 @@ if __name__ == '__main__':
                     help="Thread (direct chat) title")
     ap.add_argument("-d", "--debug", type=bool, default=False,
                     help="Debug mode")
+    ap.add_argument("-r", "--remove", type=bool, default=False,
+                    help="Remove Instagram message you sent after backup")
     ap.add_argument("-o", "--output", type=str, default='output',
                     help="Output directory")
     ap.add_argument("-l", "--log-file", type=str, default='',
@@ -141,3 +167,8 @@ if __name__ == '__main__':
     except BaseException as err:
         app.exit_application('Unknown error')
         logging.error(err.message)
+
+    if args["remove"]:
+        app.remove_messages()
+
+    app.exit_application('Finished !')
