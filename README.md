@@ -3,7 +3,7 @@ An easy way to backup all of your Instagram direct messages in an Instagram dire
 
 ### Only Backup
 
-This program will save all of messages in `output/dump_file.csv` directory and download all of media in `output`.
+This program will save all of your messages in `output/dump_file.csv` directory and download all of thread media in `output`.
 
 ```bash
   python main.py -u <username> -p <password> -t <thread-title>
@@ -24,7 +24,7 @@ CSV headers are :
 
 ##### What is `thread-title` ?
 
-Each one of threads has title.
+Every thread has title.
 When you are texting to your friend in Instagram direct , You will see your friend's username in title (header). That is `thread-title`.
 
 ##### Debug mode
