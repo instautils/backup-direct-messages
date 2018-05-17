@@ -43,10 +43,10 @@ class Application:
                     if item['thread_title'] == thread_title:
                         return item['thread_id']
 
-                if not direct['inbox']['more_available']:
+                if not direct['inbox']['has_older']:
                     return
 
-                next_page = direct['inbox']['next_max_id']
+                next_page = direct['inbox']['oldest_cursor']
 
     @staticmethod
     def download(url, target):
@@ -57,8 +57,12 @@ class Application:
             output.write(image_file.read())
 
     def dump_message(self, message):
+        if message['item_type'] == 'text':
+            text_message = safe_string(message['text'])
+        else:
+            text_message = message['item_type']
         self.csv_handler.writerow([message['user_id'],
-                                   safe_string(message['text']),
+                                   text_message,
                                    message['item_id'],
                                    message['timestamp']])
 
@@ -73,10 +77,10 @@ class Application:
             for message in thread['thread']['items']:
                 yield message
 
-            if not thread['thread']['more_available_max']:
+            if not thread['thread']['has_older']:
                 return
 
-            next_page = thread['thread']['next_max_id']
+            next_page = thread['thread']['oldest_cursor']
 
     def run(self):
         if self.debug_mode:
@@ -105,7 +109,7 @@ class Application:
                 elif media_type == 2:
                     self.download(message['media']['video_versions'][0]['url'],
                                   os.path.join(self.media_folder, message['item_id'] + '.mp4'))
-            elif message['item_type'] == 'text':
+            else:
                 self.dump_message(message)
 
     def remove_messages(self, reverse=False):
