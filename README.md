@@ -22,7 +22,7 @@ CSV headers are :
   python main.py -u <username> -p <password> -t <thread-title> --remove True
 ```
 
-##### What is <thread-title> ?
+##### What is `thread-title` ?
 
 Each one of threads has title.
 When you are texting to your friend in Instagram direct , You will see your friend's username in title (header). That is `thread-title`.
